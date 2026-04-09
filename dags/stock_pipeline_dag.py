@@ -48,9 +48,8 @@ with DAG(
     # Note: Requires setting up the Airflow Connection `dbt_cloud_default` in MWAA UI.
     transform_silver_gold = DbtCloudRunJobOperator(
         task_id='trigger_dbt_cloud_transformations',
-        # You will need to pull your exact `job_id` from your dbt Cloud URL
-        # For example: https://cloud.getdbt.com/deploy/ACCOUNT_ID/projects/PROJECT_ID/jobs/JOB_ID
-        job_id=99999,  # <-- TODO: Replace with actual dbt Cloud Job ID
+        # dbt Cloud Job ID: Nifty500 Daily Pipeline
+        job_id=70471823582979,
         check_interval=30, 
         timeout=1800, # Wait up to 30 mins for the transformation to succeed
         wait_for_termination=True, # Airflow task stays yellow until dbt finishes
