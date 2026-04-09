@@ -17,11 +17,11 @@ clean-targets:
 models:
   nifty500_stock_pipeline:
     staging:
-      +schema: SILVER
+      +schema: nifty500_silver
       +materialized: view
     silver:
-      +schema: SILVER
+      +schema: nifty500_silver
       +materialized: table
     gold:
-      +schema: GOLD
+      +schema: nifty500_gold
       +materialized: table
