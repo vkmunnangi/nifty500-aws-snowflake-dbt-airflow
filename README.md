@@ -16,7 +16,7 @@ yfinance API → Python Extractor → S3 (Delta Lake) → Snowflake (External Ta
 | **Storage** | AWS S3 (Delta Lake) | Single source of truth, columnar format |
 | **Compute** | Snowflake | Zero-copy reads via External Tables |
 | **Transform** | dbt Cloud | Silver & Gold layer transformations |
-| **Orchestration** | Airflow *(planned)* | Daily pipeline scheduling |
+| **Orchestration** | AWS MWAA (Airflow) | Daily pipeline scheduling & dbt API triggers |
 
 ### Data Layers
 
@@ -37,19 +37,21 @@ yfinance API → Python Extractor → S3 (Delta Lake) → Snowflake (External Ta
 
 ```
 nifty500-aws-snowflake-dbt-airflow/
+├── dags/
+│   └── stock_pipeline_dag.py       # Airflow orchestration DAG
 ├── src/
 │   └── extractors/
-│       └── yfinance_to_s3.py      # Main extraction pipeline
+│       └── yfinance_to_s3.py       # Main extraction python script
 ├── dbt/                            # dbt Cloud project (Silver + Gold)
 │   ├── models/
 │   │   ├── staging/
 │   │   ├── silver/
 │   │   └── gold/
 │   └── dbt_project.yml
-├── setup_snowflake.py              # Snowflake objects setup
-├── create_master_list.py           # Nifty 500 symbol list generator
-├── requirements.txt
-├── .env.example                    # Required environment variables
+├── .github/
+│   └── workflows/
+│       └── mwaa_sync.yml           # CI/CD sync script for Amazon S3
+├── mwaa_requirements.txt           # AWS MWAA Airflow dependencies
 └── README.md
 ```
 
@@ -72,10 +74,6 @@ Inside the Airflow Web UI for your MWAA environment, strictly securely store you
 **Airflow Connections:**
 - `dbt_cloud_default` (dbt Cloud connection with your API token and Account ID)
 
-### 3. Local Development
-If you wish to test extraction locally without Airflow:
-1. Copy `.env.example` to `.env` and fill in credentials.
-2. Run `python src/extractors/yfinance_to_s3.py`.
 
 ## License
 
