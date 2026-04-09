@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: stg_daily_prices
+    description: "Cleaned, deduplicated daily OHLCV prices from the Bronze layer"
+    columns:
+      - name: date
+        description: "Trading date"
+        tests:
+          - not_null
+      - name: symbol
+        description: "NSE ticker symbol"
+        tests:
+          - not_null
+      - name: close
+        description: "Closing price"
+        tests:
+          - not_null
+      - name: volume
+        description: "Trading volume"
+    tests:
+      - unique:
+          column_name: "symbol || '-' || date"

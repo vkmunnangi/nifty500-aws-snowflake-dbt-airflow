@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: weekly_technical_analysis
+    description: >
+      Gold layer: Weekly technical analysis for all Nifty 500 stocks.
+      Includes SMA, CCI, Relative Strength, and multi-timeframe breakout detection.
+      This replaces the old calculate_indicators.py script.
+    columns:
+      - name: date
+        description: "Week ending Friday date"
+        tests: [not_null]
+      - name: symbol
+        description: "NSE ticker symbol"
+        tests: [not_null]
+      - name: sma_30
+        description: "30-week Simple Moving Average of closing price"
+      - name: cci_34
+        description: "34-week Commodity Channel Index"
+      - name: rs_nifty50
+        description: "Relative Strength vs NIFTY 50 index (stock_close / nifty50_close)"
+      - name: rs_nifty500
+        description: "Relative Strength vs NIFTY 500 index (stock_close / nifty500_close)"
+      - name: is_breakout_13w
+        description: "1 if close > 13-week high, else 0"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: is_breakout_26w
+        description: "1 if close > 26-week high, else 0"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: is_breakout_52w
+        description: "1 if close > 52-week high, else 0"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: is_breakout_104w
+        description: "1 if close > 104-week high, else 0"
+        tests:
+          - accepted_values:
+              values: [0, 1]

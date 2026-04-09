@@ -1,0 +1,37 @@
+version: 2
+
+sources:
+  - name: raw
+    database: STOCK_MARKET_DB
+    schema: RAW
+    description: "Bronze layer — raw data from S3 via External Tables"
+    tables:
+      - name: ext_daily_prices
+        description: "Daily OHLCV stock prices (Delta Lake format on S3)"
+        columns:
+          - name: date
+            description: "Trading date"
+          - name: symbol
+            description: "NSE ticker symbol (e.g. RELIANCE.NS)"
+          - name: open
+            description: "Opening price"
+          - name: high
+            description: "Highest price of the day"
+          - name: low
+            description: "Lowest price of the day"
+          - name: close
+            description: "Closing price"
+          - name: volume
+            description: "Number of shares traded"
+          - name: dividends
+            description: "Dividend amount (0 if none)"
+          - name: stock_splits
+            description: "Stock split ratio (0 if none)"
+
+      - name: ext_nifty500_master
+        description: "Nifty 500 index constituents (CSV on S3)"
+        columns:
+          - name: symbol
+            description: "NSE ticker symbol"
+          - name: company_name
+            description: "Full company name"
