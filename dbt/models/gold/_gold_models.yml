@@ -25,19 +25,23 @@ models:
         description: "1 if close > 13-week high, else 0"
         tests:
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: is_breakout_26w
         description: "1 if close > 26-week high, else 0"
         tests:
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: is_breakout_52w
         description: "1 if close > 52-week high, else 0"
         tests:
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: is_breakout_104w
         description: "1 if close > 104-week high, else 0"
         tests:
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
