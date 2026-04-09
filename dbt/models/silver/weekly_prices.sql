@@ -10,14 +10,9 @@ WITH daily AS (
 with_week AS (
     SELECT
         *,
-        -- DAYOFWEEK: 0=Mon, 6=Sun in Snowflake. Friday = 4.
-        -- Calculate the next Friday for each date
-        CASE
-            WHEN DAYOFWEEK(date) <= 4
-                THEN DATEADD('day', 4 - DAYOFWEEK(date), date)
-            ELSE
-                DATEADD('day', 11 - DAYOFWEEK(date), date)
-        END AS week_ending_friday
+        -- Use DATE_TRUNC to get the start of the ISO week (Monday), then add 4 days to get Friday.
+        -- This is robust and independent of Snowflake's DAYOFWEEK integer mapping.
+        DATEADD('day', 4, DATE_TRUNC('week', date)) AS week_ending_friday
     FROM daily
 ),
 
