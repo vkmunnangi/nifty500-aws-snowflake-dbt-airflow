@@ -1,0 +1,30 @@
+name: MWAA S3 Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dags/**'
+      - 'src/**'
+      - 'mwaa_requirements.txt'
+
+jobs:
+  sync_to_mwaa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Sync DAGs and Src to MWAA S3 Bucket
+        run: |
+          aws s3 sync dags s3://${{ secrets.MWAA_S3_BUCKET }}/dags/
+          aws s3 sync src s3://${{ secrets.MWAA_S3_BUCKET }}/dags/src/
+          aws s3 cp mwaa_requirements.txt s3://${{ secrets.MWAA_S3_BUCKET }}/mwaa_requirements.txt

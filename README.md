@@ -53,13 +53,29 @@ nifty500-aws-snowflake-dbt-airflow/
 └── README.md
 ```
 
-## Setup
+## Setup & Deployment (AWS MWAA)
 
-1. Clone the repo
-2. Copy `.env.example` to `.env` and fill in your credentials
-3. Install dependencies: `pip install -r requirements.txt`
-4. Run Snowflake setup: `python setup_snowflake.py`
-5. Run extraction: `python src/extractors/yfinance_to_s3.py`
+This project uses **Apache Airflow** hosted on **AWS MWAA** for continuous cloud orchestration.
+
+### 1. CI/CD Integration (GitHub Actions)
+You do not need to manually drag and drop files into your MWAA environment.
+1. Add your AWS Credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, and `MWAA_S3_BUCKET`) to your **GitHub Repository Secrets**.
+2. Any code pushed to the `main` branch will automatically be synced to your MWAA S3 bucket via GitHub Actions.
+
+### 2. AWS MWAA Configuration
+Inside the Airflow Web UI for your MWAA environment, strictly securely store your variables:
+
+**Airflow Variables:**
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BUCKET_NAME`
+- `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`, `SNOWFLAKE_DATABASE`, `SNOWFLAKE_SCHEMA`
+
+**Airflow Connections:**
+- `dbt_cloud_default` (dbt Cloud connection with your API token and Account ID)
+
+### 3. Local Development
+If you wish to test extraction locally without Airflow:
+1. Copy `.env.example` to `.env` and fill in credentials.
+2. Run `python src/extractors/yfinance_to_s3.py`.
 
 ## License
 
