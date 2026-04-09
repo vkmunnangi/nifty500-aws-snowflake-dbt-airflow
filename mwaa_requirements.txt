@@ -5,3 +5,4 @@ snowflake-connector-python[pandas]==3.7.0
 python-dotenv==1.0.1
 apache-airflow-providers-snowflake==5.3.1
 apache-airflow-providers-dbt-cloud==3.6.0
+# Trigger CI/CD S3 upload
