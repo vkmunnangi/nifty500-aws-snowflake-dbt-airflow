@@ -32,7 +32,7 @@ week_boundaries AS (
 ohlcv AS (
     SELECT
         wb.symbol,
-        wb.week_ending_friday AS date,
+        wb.last_day AS date,
         first_day_data.open,
         agg.high,
         agg.low,

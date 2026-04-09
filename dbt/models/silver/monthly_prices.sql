@@ -29,7 +29,7 @@ month_boundaries AS (
 ohlcv AS (
     SELECT
         mb.symbol,
-        mb.month_end AS date,
+        mb.last_day AS date,
         first_day_data.open,
         agg.high,
         agg.low,
