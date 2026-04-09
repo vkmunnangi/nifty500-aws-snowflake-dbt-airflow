@@ -1,0 +1,7 @@
+pandas==2.2.0
+yfinance==0.2.37
+deltalake==0.16.1
+snowflake-connector-python[pandas]==3.7.0
+python-dotenv==1.0.1
+apache-airflow-providers-snowflake==5.3.1
+apache-airflow-providers-dbt-cloud==3.6.0

@@ -46,30 +46,52 @@ logging.getLogger("peewee").setLevel(logging.ERROR)
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 load_dotenv(os.path.join(PROJECT_ROOT, ".env"))
 
-# ── AWS config ───────────────────────────────────────────────────────
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_S3_BUCKET_NAME = os.getenv("AWS_S3_BUCKET_NAME")
-AWS_REGION = os.getenv("AWS_REGION", "ap-south-1")
+# ── AWS/Snowflake Config (Airflow + Local fallback) ───────────────────
+
+# Try pulling from Airflow first (AWS MWAA production)
+try:
+    from airflow.models import Variable
+    IN_AIRFLOW = True
+    AWS_ACCESS_KEY_ID = Variable.get("AWS_ACCESS_KEY_ID", default_var=os.getenv("AWS_ACCESS_KEY_ID"))
+    AWS_SECRET_ACCESS_KEY = Variable.get("AWS_SECRET_ACCESS_KEY", default_var=os.getenv("AWS_SECRET_ACCESS_KEY"))
+    AWS_S3_BUCKET_NAME = Variable.get("AWS_S3_BUCKET_NAME", default_var=os.getenv("AWS_S3_BUCKET_NAME"))
+    AWS_REGION = Variable.get("AWS_REGION", default_var=os.getenv("AWS_REGION", "ap-south-1"))
+
+    # Snowflake Config
+    SF_CONFIG = {
+        "account": Variable.get("SNOWFLAKE_ACCOUNT", default_var=os.getenv("SNOWFLAKE_ACCOUNT")),
+        "user": Variable.get("SNOWFLAKE_USER", default_var=os.getenv("SNOWFLAKE_USER")),
+        "password": Variable.get("SNOWFLAKE_PASSWORD", default_var=os.getenv("SNOWFLAKE_PASSWORD")),
+        "role": Variable.get("SNOWFLAKE_ROLE", default_var=os.getenv("SNOWFLAKE_ROLE", "ACCOUNTADMIN")),
+        "warehouse": Variable.get("SNOWFLAKE_WAREHOUSE", default_var=os.getenv("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH")),
+        "database": Variable.get("SNOWFLAKE_DATABASE", default_var=os.getenv("SNOWFLAKE_DATABASE", "STOCK_MARKET_DB")),
+        "schema": Variable.get("SNOWFLAKE_SCHEMA", default_var=os.getenv("SNOWFLAKE_SCHEMA", "RAW")),
+    }
+except ImportError:
+    # Local runs without Airflow
+    IN_AIRFLOW = False
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_S3_BUCKET_NAME = os.getenv("AWS_S3_BUCKET_NAME")
+    AWS_REGION = os.getenv("AWS_REGION", "ap-south-1")
+
+    SF_CONFIG = {
+        "account": os.getenv("SNOWFLAKE_ACCOUNT"),
+        "user": os.getenv("SNOWFLAKE_USER"),
+        "password": os.getenv("SNOWFLAKE_PASSWORD"),
+        "role": os.getenv("SNOWFLAKE_ROLE", "ACCOUNTADMIN"),
+        "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
+        "database": os.getenv("SNOWFLAKE_DATABASE", "STOCK_MARKET_DB"),
+        "schema": os.getenv("SNOWFLAKE_SCHEMA", "RAW"),
+    }
 
 S3_STORAGE_OPTIONS = {
     "AWS_ACCESS_KEY_ID": AWS_ACCESS_KEY_ID,
     "AWS_SECRET_ACCESS_KEY": AWS_SECRET_ACCESS_KEY,
     "AWS_REGION": AWS_REGION,
     "AWS_S3_ALLOW_UNSAFE_RENAME": "true",
-    "timeout": "600s",           # default 180s too short for India → eu-north-1
+    "timeout": "600s",
     "connect_timeout": "30s",
-}
-
-# ── Snowflake config ─────────────────────────────────────────────────
-SF_CONFIG = {
-    "account": os.getenv("SNOWFLAKE_ACCOUNT"),
-    "user": os.getenv("SNOWFLAKE_USER"),
-    "password": os.getenv("SNOWFLAKE_PASSWORD"),
-    "role": os.getenv("SNOWFLAKE_ROLE", "ACCOUNTADMIN"),
-    "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
-    "database": os.getenv("SNOWFLAKE_DATABASE", "STOCK_MARKET_DB"),
-    "schema": os.getenv("SNOWFLAKE_SCHEMA", "RAW"),
 }
 
 # ── Paths & constants ────────────────────────────────────────────────
