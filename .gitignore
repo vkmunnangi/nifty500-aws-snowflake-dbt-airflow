@@ -35,3 +35,7 @@ Thumbs.db
 dbt/target/
 dbt/dbt_packages/
 dbt/logs/
+target/
+.user.yml
+profiles.yml
+dbt_venv/
