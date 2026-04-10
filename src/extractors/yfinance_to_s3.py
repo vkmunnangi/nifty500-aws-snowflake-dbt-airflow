@@ -23,6 +23,7 @@ import json
 import logging
 from datetime import datetime, date, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Optional
 
 import boto3
 import pandas as pd
@@ -233,8 +234,8 @@ def upload_master_to_s3() -> None:
 # ── yfinance download ───────────────────────────────────────────────
 def fetch_symbol_history(
     symbol: str,
-    period: str | None = None,
-    start_date: date | None = None,
+    period: Optional[str] = None,
+    start_date: Optional[date] = None,
 ) -> pd.DataFrame:
     """Download OHLCV data with retries."""
     for attempt in range(1, MAX_RETRIES + 1):
@@ -272,8 +273,8 @@ def fetch_symbol_history(
 
 def download_symbols(
     symbols: list[str],
-    period: str | None = None,
-    start_date: date | None = None,
+    period: Optional[str] = None,
+    start_date: Optional[date] = None,
     label: str = "",
 ) -> tuple[list[pd.DataFrame], list[str]]:
     """Download data in batches. Returns (frames, failed_symbols)."""

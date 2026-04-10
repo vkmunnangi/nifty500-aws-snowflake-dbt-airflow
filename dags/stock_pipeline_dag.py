@@ -3,7 +3,7 @@ import sys
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from airflow.providers.dbt.cloud.operators.dbt import DbtCloudRunJobOperator
 
 # Ensure the MWAA worker can find the src modulo structure when dags/ and src/ are zipped
@@ -24,7 +24,7 @@ with DAG(
     dag_id='nifty500_lakehouse_pipeline',
     default_args=default_args,
     description='Extracts Nifty 500 OHLCV data into S3 and triggers dbt Cloud Silver/Gold transformations.',
-    schedule_interval='0 12 * * 1-5',  # 12:00 PM UTC = 5:30 PM IST (Mon-Fri)
+    schedule='0 12 * * 1-5',  # 12:00 PM UTC = 5:30 PM IST (Mon-Fri)
     start_date=datetime(2023, 1, 1),
     catchup=False,
     tags=['finance', 'dbt', 'snowflake', 's3'],
